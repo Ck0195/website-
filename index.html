@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon & Bean | Professional Menu</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #020203;
+            --card-bg: #0a0b0d;
+            --accent: #00d4ff;
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: var(--text-main); 
+            line-height: 1.5; overflow-x: hidden; scroll-behavior: smooth;
+        }
+
+        /* --- LOADER --- */
+        #loader {
+            position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .loader-icon { font-size: 2.5rem; color: var(--accent); animation: glow 1.5s infinite; }
+        @keyframes glow { 0%, 100% { filter: drop-shadow(0 0 5px var(--accent)); } 50% { filter: drop-shadow(0 0 20px var(--accent)); } }
+
+        /* --- NAV --- */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 6%; background: rgba(2, 2, 3, 0.9); backdrop-filter: blur(15px);
+            position: fixed; width: 88%; top: 0; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .logo { font-weight: 900; font-size: 1.4rem; color: var(--accent); letter-spacing: 2px; }
+
+        /* --- HERO --- */
+        .hero {
+            height: 60vh; display: flex; align-items: center; padding: 0 8%;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.9)), 
+                        url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1920&q=90');
+            background-size: cover; background-position: center;
+        }
+        .hero-text h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.1; margin: 10px 0; }
+
+        /* --- TOP SELLERS --- */
+        .shelf-title { padding: 30px 8% 10px; font-size: 0.75rem; letter-spacing: 3px; color: var(--accent); font-weight: 800; text-transform: uppercase; }
+        .horizontal-scroll {
+            display: flex; gap: 15px; padding: 10px 8% 30px; overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .mini-card {
+            flex: 0 0 200px; background: #111418; border-radius: 12px; padding: 10px;
+            border: 1px solid rgba(0,212,255,0.1); transition: 0.3s;
+        }
+        .mini-card img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; }
+
+        /* --- TABS --- */
+        .tabs-container { display: flex; justify-content: center; gap: 8px; padding: 20px 0; background: var(--bg); position: sticky; top: 60px; z-index: 900; }
+        .tab { background: transparent; border: 1px solid #1a1a1a; color: var(--text-dim); padding: 8px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 700; }
+        .tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+        /* --- COMPACT GRID --- */
+        .menu-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); 
+            gap: 20px; padding: 20px 8% 100px; 
+        }
+        .item-card { 
+            background: var(--card-bg); border-radius: 12px; overflow: hidden; 
+            border: 1px solid rgba(255,255,255,0.03); transition: 0.4s;
+            opacity: 0; transform: translateY(15px);
+        }
+        .item-card.show { opacity: 1; transform: translateY(0); }
+        
+        .img-box { height: 150px; overflow: hidden; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .item-info { padding: 15px; }
+        .item-info h3 { margin: 0; font-size: 0.95rem; font-weight: 800; }
+        .item-info p { color: var(--text-dim); font-size: 0.7rem; margin: 8px 0; height: 32px; overflow: hidden; }
+        
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+        .price { color: var(--accent); font-weight: 900; font-size: 1rem; }
+        .add-btn { background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: 900; }
+
+        /* --- CART --- */
+        #cart-panel {
+            position: fixed; right: -400px; top: 0; width: 350px; height: 100vh;
+            background: #08090a; border-left: 2px solid var(--accent);
+            z-index: 2000; padding: 40px 25px; display: flex; flex-direction: column; transition: 0.4s; box-sizing: border-box;
+        }
+        #cart-panel.active { right: 0; }
+        textarea { width: 100%; background: #111; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; margin-top: 10px; resize: none; font-family: inherit; }
+    </style>
+</head>
+<body>
+
+<div id="loader">
+    <i class="fas fa-coffee loader-icon"></i>
+</div>
+
+<nav>
+    <div class="logo">NEON & BEAN</div>
+    <div onclick="toggleCart()" style="cursor:pointer; font-weight: 900; color: var(--accent); font-size: 0.85rem;">
+        CART (<span id="count">0</span>)
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-text">
+        <p style="color:var(--accent); letter-spacing:4px; font-weight:800; font-size:0.7rem;">EST. 2026</p>
+        <h1>THE PERFECT POUR</h1>
+    </div>
+</section>
+
+<p class="shelf-title">Customer Favorites</p>
+<div class="horizontal-scroll">
+    <div class="mini-card">
+        <img src="https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400">
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><b>Nitro Brew</b> <span>$5.50</span></div>
+    </div>
+    <div class="mini-card">
+        <img src="https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?w=400">
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><b>Black Latte</b> <span>$6.00</span></div>
+    </div>
+    <div class="mini-card">
+        <img src="https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400">
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><b>Truffle Avo</b> <span>$12.00</span></div>
+    </div>
+</div>
+
+<div class="tabs-container" id="menu-start">
+    <button class="tab active" onclick="renderMenu('all', this)">ALL</button>
+    <button class="tab" onclick="renderMenu('coffee', this)">DRINKS</button>
+    <button class="tab" onclick="renderMenu('food', this)">FOOD</button>
+</div>
+
+<div id="menu-container" class="menu-grid"></div>
+
+<div id="cart-panel">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0; font-weight: 900;">YOUR ORDER</h2>
+        <i class="fas fa-times" onclick="toggleCart()" style="cursor:pointer;"></i>
+    </div>
+    <div id="cart-items" style="margin: 30px 0; border-top: 1px solid #222; padding-top: 15px; max-height: 350px; overflow-y: auto;"></div>
+    
+    <div style="margin-top: auto;">
+        <p style="font-weight: 800; font-size: 0.7rem; color: var(--accent); margin-bottom: 5px;">SPECIAL REQUESTS</p>
+        <textarea id="notes" rows="2" placeholder="No sugar, extra ice, etc..."></textarea>
+        
+        <div style="display:flex; justify-content:space-between; font-weight: 900; font-size: 1.4rem; margin-top: 20px;">
+            <span>TOTAL</span> <span id="total-price">$0.00</span>
+        </div>
+        <button onclick="checkout()" style="width:100%; background:var(--accent); padding:18px; border:none; border-radius:8px; margin-top:20px; font-weight:900; cursor:pointer;">ORDER VIA WHATSAPP</button>
+    </div>
+</div>
+
+<script>
+    // FULL AUDITED DATASET
+    const menu = [
+        { cat: 'coffee', name: 'Nitro Cold Brew', price: 5.50, desc: 'Ultra-smooth velvet coffee.', id: '1517701604599-bb29b565090c' },
+        { cat: 'coffee', name: 'Charcoal Latte', price: 6.00, desc: 'Detox charcoal & vanilla bean.', id: '1534353473418-4cfa6c56fd38' },
+        { cat: 'coffee', name: 'Cloud Latte', price: 6.25, desc: 'Whipped coffee over cold milk.', id: '1514432324607-a07d9f4a7083' }, // Fixed ID
+        { cat: 'food', name: 'Truffle Avocado', price: 12.00, desc: 'Sourdough toast & white truffle.', id: '1525351484163-7529414344d8' },
+        { cat: 'food', name: 'Miso Donut', price: 4.50, desc: 'Signature brioche with miso caramel.', id: '1555507036-ab1f4038808a' },
+        { cat: 'food', name: 'Wild Mushrooms', price: 11.00, desc: 'Sautéed mushrooms on brioche.', id: '1475090169767-40ed8d18f67d' }
+    ];
+
+    let cart = [];
+
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.getElementById('loader').style.opacity = '0';
+            setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+            renderMenu('all');
+        }, 1000);
+    });
+
+    function renderMenu(category, btn) {
+        if(btn) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+        }
+        const container = document.getElementById('menu-container');
+        container.innerHTML = '';
+        const items = category === 'all' ? menu : menu.filter(i => i.cat === category);
+        
+        items.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            card.innerHTML = `
+                <div class="img-box"><img src="https://images.unsplash.com/photo-${item.id}?auto=format&fit=crop&w=500&q=80"></div>
+                <div class="item-info">
+                    <h3>${item.name}</h3>
+                    <p>${item.desc}</p>
+                    <div class="price-row">
+                        <span class="price">$${item.price.toFixed(2)}</span>
+                        <button class="add-btn" onclick="addToCart('${item.name}', ${item.price})">ADD</button>
+                    </div>
+                </div>`;
+            container.appendChild(card);
+            setTimeout(() => card.classList.add('show'), index * 60);
+        });
+    }
+
+    function addToCart(name, price) {
+        cart.push({name, price});
+        document.getElementById('count').innerText = cart.length;
+        updateUI();
+    }
+
+    function updateUI() {
+        const total = cart.reduce((s, i) => s + i.price, 0);
+        document.getElementById('total-price').innerText = '$' + total.toFixed(2);
+        document.getElementById('cart-items').innerHTML = cart.map(i => `
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:0.85rem;">
+                <span>${i.name}</span><span>$${i.price.toFixed(2)}</span>
+            </div>`).join('');
+    }
+
+    function toggleCart() { document.getElementById('cart-panel').classList.toggle('active'); }
+
+    function checkout() {
+        if(cart.length === 0) return alert("Cart is empty!");
+        const notes = document.getElementById('notes').value;
+        const items = cart.map(i => i.name).join(", ");
+        const text = `*NEW ORDER*%0AItems: ${items}%0ANotes: ${notes}%0ATotal: ${document.getElementById('total-price').innerText}`;
+        window.open(`https://wa.me/YOUR_PHONE?text=${text}`);
+    }
+</script>
+</body>
+</html>
