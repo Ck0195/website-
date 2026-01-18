@@ -3,77 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon & Bean | Premium Indian Menu</title>
+    <title>Neon & Bean | Luxury Coffee Experience</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <div class="grain-overlay"></div>
+    <div class="neon-blur-1"></div>
+    <div class="neon-blur-2"></div>
+
     <div id="loader">
-        <i class="fas fa-coffee loader-icon"></i>
+        <div class="luxury-loader">
+            <span class="nb-letter">N</span>
+            <span class="nb-letter">B</span>
+        </div>
     </div>
 
+    <div id="toast-container"></div>
+
     <nav>
-        <div class="logo">NEON & BEAN</div>
-        <div id="cart-trigger" onclick="toggleCart()">
-            <div class="cart-icon-wrapper">
-                <i class="fas fa-shopping-basket"></i>
-                <span id="count">0</span>
+        <div class="logo-area">
+            <div class="logo">NEON <span>&</span> BEAN</div>
+            <div id="shop-status" class="status-badge"></div>
+        </div>
+        <div class="nav-right">
+            <div class="lang-pill">
+                <i class="fas fa-globe"></i>
+                <select id="lang-switch" onchange="changeLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="kn">ಕನ್ನಡ</option>
+                </select>
+            </div>
+            <div id="cart-trigger" onclick="toggleCart()">
+                <div class="cart-icon-wrapper">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span id="count">0</span>
+                </div>
             </div>
         </div>
     </nav>
 
     <header class="hero">
-        <div class="hero-text">
-            <p class="est">EST. 2026</p>
-            <h1>THE PERFECT POUR</h1>
+        <div class="hero-content">
+            <div class="hero-line"></div>
+            <p class="est">SINCE 2026</p>
+            <h1 data-i18n="hero_title">THE PERFECT POUR</h1>
+            <p class="hero-subtext">Artisan Coffee & Gourmet Indian Fusion</p>
         </div>
     </header>
 
     <main>
-        <div class="search-wrapper">
-            <div class="search-box">
+        <div class="search-container">
+            <div class="search-box-premium">
                 <i class="fas fa-search"></i>
-                <input type="text" id="menuSearch" placeholder="Search for Chai, Tikka, Coffee..." onkeyup="handleSearch()">
+                <input type="text" id="menuSearch" data-i18n-placeholder="search_placeholder" placeholder="Discover excellence..." onkeyup="handleSearch()">
+                <i class="fas fa-times-circle" id="clearSearch" onclick="clearSearchField()"></i>
             </div>
         </div>
 
         <div class="tabs-container">
-            <button class="tab active" onclick="renderMenu('all', this)">ALL</button>
-            <button class="tab" onclick="renderMenu('coffee', this)">DRINKS</button>
-            <button class="tab" onclick="renderMenu('food', this)">FOOD</button>
+            <div class="tab-pill">
+                <button class="tab active" onclick="renderMenu('all', this)" data-i18n="cat_all">ALL</button>
+                <button class="tab" onclick="renderMenu('coffee', this)" data-i18n="cat_drinks">DRINKS</button>
+                <button class="tab" onclick="renderMenu('food', this)" data-i18n="cat_food">FOOD</button>
+                <div class="tab-indicator"></div>
+            </div>
         </div>
 
-        <div id="menu-container" class="menu-grid"></div>
+        <div id="menu-container" class="menu-grid">
+            </div>
     </main>
 
     <div id="cart-panel">
         <div class="cart-header">
             <div>
-                <h2>YOUR ORDER</h2>
-                <p id="order-id">#NB-2026</p>
+                <h2 data-i18n="cart_title">ORDER SUMMARY</h2>
+                <p id="order-id">TRANSACTION #NB-0402</p>
             </div>
-            <i class="fas fa-times close-cart" onclick="toggleCart()"></i>
+            <div class="close-circle" onclick="toggleCart()">
+                <i class="fas fa-times"></i>
+            </div>
         </div>
 
-        <div id="cart-items" class="receipt-style">
-            </div>
+        <div id="cart-items" class="receipt-style"></div>
         
         <div class="cart-footer">
             <div class="request-box">
-                <i class="far fa-sticky-note"></i>
-                <textarea id="notes" rows="1" placeholder="Add cooking instructions..."></textarea>
+                <textarea id="notes" rows="1" data-i18n-placeholder="notes_placeholder" placeholder="Special requests for the chef..."></textarea>
             </div>
             
             <div class="bill-details">
-                <div class="bill-row"><span>Item Total</span> <span id="subtotal">₹0</span></div>
-                <div class="bill-row"><span>Taxes & Charges</span> <span>₹0</span></div>
-                <div class="bill-row total"><span>GRAND TOTAL</span> <span id="total-price">₹0</span></div>
+                <div class="bill-row"><span data-i18n="bill_subtotal">Subtotal</span> <span id="subtotal">₹0</span></div>
+                <div class="bill-row"><span data-i18n="bill_tax">Boutique Tax (5%)</span> <span id="tax-amount">₹0</span></div>
+                <div class="bill-row total"><span data-i18n="bill_total">TOTAL</span> <span id="total-price">₹0</span></div>
             </div>
 
             <button class="checkout-btn" onclick="checkout()">
-                <span>SEND TO WHATSAPP</span>
+                <span data-i18n="btn_checkout">CONFIRM VIA WHATSAPP</span>
                 <i class="fab fa-whatsapp"></i>
             </button>
         </div>
